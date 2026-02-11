@@ -16,6 +16,10 @@
             <i class="fas fa-pen-nib"></i>
             <span>CartScribe</span>
         </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/compare?req=latest+tech">Discover</a>
+        </div>
     </nav>
 
     <main>
@@ -29,8 +33,14 @@
 
         <div class="compare-grid">
             {% for item in results %}
-            <div class="compare-card animate-up-delay" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+            {% set delay = loop.index0 * 0.1 %}
+            <div class="compare-card animate-up-delay" style="--delay: {{ delay }}s">
                 <div class="price-rank">#{{ loop.index }}</div>
+                <div class="compare-img">
+                    <img src="https://loremflickr.com/200/200/{{ item.img_keyword if item.img_keyword else 'product' }},product?{{ loop.index }}"
+                        alt="{{ item.name }}"
+                        onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200'">
+                </div>
                 <div class="compare-info">
                     <h3>{{ item.name }}</h3>
                     <p class="match-reason">{{ item.desc }}</p>
@@ -40,9 +50,14 @@
                 </div>
                 <div class="compare-bottom">
                     <div class="compare-price">{{ item.original_price }}</div>
-                    <button class="buy-now-btn" onclick="window.location.href='/product?q={{ item.name }}'">
-                        Scribe Details
-                    </button>
+                    <div class="compare-actions">
+                        <a href="/product?q={{ item.name|urlencode }}" class="buy-now-btn secondary">
+                            Details
+                        </a>
+                        <a href="{{ item.url }}" target="_blank" class="buy-now-btn">
+                            Go to Store
+                        </a>
+                    </div>
                 </div>
             </div>
             {% endfor %}

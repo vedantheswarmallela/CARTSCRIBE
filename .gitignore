@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+.dev_gemini/
+*.log
+api_test_result.txt
+debug_output*.txt
+working_model_results.txt
+models.txt
+platform_test.txt
+api_test_result.txt

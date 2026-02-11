@@ -174,6 +174,23 @@ nav {
     -webkit-text-fill-color: var(--primary);
 }
 
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 1rem;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
 /* Main Layout */
 main {
     padding: 0 5%;
@@ -472,7 +489,7 @@ input {
 }
 
 .animate-up-delay {
-    animation: up 0.8s 0.2s ease-out forwards;
+    animation: up 0.8s var(--delay, 0.2s) ease-out forwards;
     opacity: 0;
 }
 
@@ -811,6 +828,7 @@ footer {
         font-size: 3rem;
     }
 }
+
 /* Comparison Page Styles (Light) */
 .compare-header {
     text-align: center;
@@ -831,16 +849,30 @@ footer {
     background: #ffffff;
     border: 1px solid var(--glass-border);
     border-radius: 24px;
-    padding: 2rem;
+    padding: 1.5rem;
     display: grid;
-    grid-template-columns: 60px 1fr 200px;
+    grid-template-columns: 50px 80px 1fr 180px;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     transition: var(--transition);
     position: relative;
     overflow: hidden;
     text-align: left;
+}
+
+.compare-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.compare-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .compare-card:hover {
@@ -885,6 +917,26 @@ footer {
 
 .compare-bottom {
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.compare-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.buy-now-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.buy-now-btn.secondary:hover {
+    background: rgba(99, 102, 241, 0.05);
 }
 
 .compare-price {
@@ -899,12 +951,22 @@ footer {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 15px;
+        padding: 2rem;
     }
-    .price-rank {
+
+    .price-rank,
+    .compare-img {
         margin: 0 auto;
     }
+
     .compare-bottom {
         text-align: center;
+        align-items: center;
+    }
+
+    .compare-actions {
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }
 
@@ -963,3 +1025,26 @@ footer {
     margin: 0;
 }
 
+.error-msg {
+    text-align: center;
+    padding: 4rem 2rem;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: white;
+    border-radius: 24px;
+    border: 1px dashed var(--glass-border);
+}
+
+.error-msg i {
+    font-size: 3rem;
+    color: var(--secondary);
+}
+
+.error-msg p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 400px;
+}

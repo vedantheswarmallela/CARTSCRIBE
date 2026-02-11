@@ -28,6 +28,20 @@ else:
     print("DEBUG: Gemini API Key not found. Using Mock Mode.")
     model = None
 
+def generate_search_url(platform_name, product_name):
+    query = product_name.replace(' ', '+')
+    if platform_name.lower() == 'amazon':
+        return f"https://www.amazon.in/s?k={query}"
+    elif platform_name.lower() == 'flipkart':
+        return f"https://www.flipkart.com/search?q={query}"
+    elif platform_name.lower() == 'myntra':
+        return f"https://www.myntra.com/{query}"
+    elif platform_name.lower() == 'meesho':
+        return f"https://www.meesho.com/search?q={query}"
+    elif platform_name.lower() == 'ajio':
+        return f"https://www.ajio.com/search/?text={query}"
+    return f"https://www.google.com/search?q={query}"
+
 def get_ai_suggestions(query):
     if not model:
         # Mock data if no API key
@@ -58,6 +72,10 @@ def get_ai_suggestions(query):
     except Exception as e:
         print(f"Error calling Gemini: {e}")
         return [{"name": f"AI Result for {query}", "desc": "Smart product finding is currently limited. Please check back soon!", "price": "N/A"}]
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 @app.route('/')
 def index():
@@ -154,6 +172,12 @@ def product_page():
                 content = json_match.group(1)
             
             product_data = json.loads(content)
+            
+            # Post-process platforms to ensure URLs
+            if 'platforms' in product_data:
+                for platform in product_data['platforms']:
+                    if not platform.get('url') or 'search link' in platform.get('url', '').lower():
+                        platform['url'] = generate_search_url(platform['name'], product_data['name'])
         except Exception as e:
             print(f"DEBUG: API Call Failed: {e}")
             # Dynamic Mock Prices for better UX during Quota Limit
@@ -178,6 +202,19 @@ def product_page():
                 "image_keywords": query if len(query) < 20 else "product",
                 "price_analysis": f"Market analysis suggests Meesho currently offers the best deal at ₹{base_price:,}. Flipkart is the next best option with bank discounts. Stock levels appear healthy across major platforms."
             }
+
+    # Sort platforms by price (lowest first, 'Not Available' last)
+    def platform_sort_key(p):
+        price_str = p.get('price', 'Not Available')
+        if price_str == 'Not Available':
+            return float('inf')
+        try:
+            return float(re.sub(r'[^\d.]', '', price_str))
+        except:
+            return float('inf')
+    
+    if 'platforms' in product_data:
+        product_data['platforms'].sort(key=platform_sort_key)
 
     return render_template('product.html', product=product_data, source_url=query if is_url else None)
 
@@ -205,6 +242,7 @@ def compare_page():
         3. "original_price": String lowest price with currency (e.g. "₹54,000").
         4. "desc": 1 sentence why it matches.
         5. "rating": Rating out of 5 (e.g. 4.3).
+        6. "img_keyword": 1-2 words for image search (e.g. "laptop", "shirt").
         
         Sort the response by price from LOW to HIGH.
         Return ONLY valid JSON.
@@ -216,6 +254,16 @@ def compare_page():
             if json_match:
                 content = json_match.group(1)
             results = json.loads(content)
+            if not isinstance(results, list):
+                results = [results]
+            
+            # Post-process results for links and keywords
+            for item in results:
+                if not item.get('url'):
+                    item['url'] = generate_search_url('Google', item['name'])
+                if not item.get('img_keyword'):
+                    item['img_keyword'] = item['name'].split()[0] if item['name'] else 'product'
+            
             # Re-sort just in case AI missed it
             def get_price(item):
                 p = item.get('price', 0)
@@ -229,6 +277,7 @@ def compare_page():
                 return p if isinstance(p, (int, float)) else 0
 
             results.sort(key=get_price)
+            print(f"DEBUG: Successfully fetched {len(results)} items for comparison.")
         except Exception as e:
             print(f"DEBUG: Compare API Failed: {e}")
             results = [
