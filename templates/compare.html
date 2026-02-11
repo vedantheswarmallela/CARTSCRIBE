@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scribe Comparison | CartScribe AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="product-page">
+    <nav>
+        <div class="logo" onclick="window.location.href='/'">
+            <i class="fas fa-pen-nib"></i>
+            <span>CartScribe</span>
+        </div>
+    </nav>
+
+    <main>
+        <div class="compare-header animate-up">
+            <div class="analysis-badge">
+                <i class="fas fa-robot"></i> Agentic Comparison
+            </div>
+            <h1>Lowest to Highest Prices</h1>
+            <p class="subtitle">Based on your requirements: "<i>{{ requirements }}</i>"</p>
+        </div>
+
+        <div class="compare-grid">
+            {% for item in results %}
+            <div class="compare-card animate-up-delay" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                <div class="price-rank">#{{ loop.index }}</div>
+                <div class="compare-info">
+                    <h3>{{ item.name }}</h3>
+                    <p class="match-reason">{{ item.desc }}</p>
+                    <div class="compare-rating">
+                        <i class="fas fa-star"></i> {{ item.rating }}
+                    </div>
+                </div>
+                <div class="compare-bottom">
+                    <div class="compare-price">{{ item.original_price }}</div>
+                    <button class="buy-now-btn" onclick="window.location.href='/product?q={{ item.name }}'">
+                        Scribe Details
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if not results %}
+            <div class="error-msg">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>AI couldn't find matches for those specific requirements. Try being more general!</p>
+                <a href="/" class="buy-now-btn">Back to Home</a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CartScribe AI. All rights scribed.</p>
+    </footer>
+</body>
+
+</html>

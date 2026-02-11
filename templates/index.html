@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CartScribe | AI-Powered Product Discovery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="background-doodles">
+        <i class="fas fa-tshirt doodle doodle-1"></i>
+        <i class="fas fa-laptop doodle doodle-2"></i>
+        <i class="fas fa-mobile-screen doodle doodle-3"></i>
+        <i class="fas fa-headphones doodle doodle-4"></i>
+        <i class="fas fa-glasses doodle doodle-5"></i>
+        <i class="fas fa-camera doodle doodle-6"></i>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <i class="fas fa-pen-nib"></i>
+            <span>CartScribe</span>
+        </div>
+    </nav>
+
+    <main>
+        <div class="hero">
+            <h1 class="animate-up">What are you looking for today?</h1>
+            <p class="subtitle animate-up-delay">Scribe your needs, let AI find the best for you.</p>
+
+            <div class="search-tabs animate-up-delay-2">
+                <button class="tab-btn active" onclick="switchTab('simple')">Quick Search</button>
+                <button class="tab-btn" onclick="switchTab('advanced')">Scribe Requirements</button>
+            </div>
+
+            <div class="search-container animate-up-delay-2" id="simple-search">
+                <form id="search-form" class="search-bar" action="/product" method="GET">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="query" name="q"
+                        placeholder="Scribe a product or paste a link (Amazon/Flipkart)..." autocomplete="off" required>
+                    <button type="submit" class="scribe-btn">
+                        <span>Scribe</span>
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="search-container animate-up-delay-2 hidden" id="advanced-search">
+                <form id="requirements-form" class="search-bar advanced-bar" action="/compare" method="GET">
+                    <i class="fas fa-list-check search-icon"></i>
+                    <textarea id="requirements" name="req"
+                        placeholder="List your specific requirements (e.g., 'Laptop under 50k, 16GB RAM, OLED screen, for coding')..."
+                        required></textarea>
+                    <button type="submit" class="scribe-btn">
+                        <span>Agent Search</span>
+                        <i class="fas fa-robot"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories Removed -->
+        </div>
+
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <p>CartScribe AI is analyzing your request...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('simple-search').classList.add('hidden');
+            document.getElementById('advanced-search').classList.add('hidden');
+
+            if (type === 'simple') {
+                document.querySelector('[onclick="switchTab(\'simple\')"]').classList.add('active');
+                document.getElementById('simple-search').classList.remove('hidden');
+            } else {
+                document.querySelector('[onclick="switchTab(\'advanced\')"]').classList.add('active');
+                document.getElementById('advanced-search').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('search-form').addEventListener('submit', function () {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        });
+
+        document.getElementById('requirements-form').addEventListener('submit', function () {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        });
+    </script>
+</body>
+
+</html>

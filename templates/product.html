@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | CartScribe Comparison</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="product-page">
+    <div class="background-doodles">
+        <i class="fas fa-tshirt doodle doodle-1"></i>
+        <i class="fas fa-laptop doodle doodle-2"></i>
+        <i class="fas fa-mobile-screen doodle doodle-3"></i>
+        <i class="fas fa-headphones doodle doodle-4"></i>
+        <i class="fas fa-glasses doodle doodle-5"></i>
+        <i class="fas fa-camera doodle doodle-6"></i>
+    </div>
+
+    <nav>
+        <div class="logo" onclick="window.location.href='/'">
+            <i class="fas fa-pen-nib"></i>
+            <span>CartScribe</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="#">Categories</a>
+        </div>
+    </nav>
+
+    <main class="product-detail">
+        <section class="product-hero">
+            <div class="product-image-container animate-up">
+                <div class="main-image">
+                    <i class="fas fa-box-open placeholder-icon"></i>
+                    <img id="dynamic-img"
+                        src="https://loremflickr.com/800/800/{{ product.image_keywords if product.image_keywords else product.name.split()|join(',') }},product"
+                        alt="{{ product.name }}"
+                        onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800'">
+                </div>
+            </div>
+            <div class="product-info animate-up-delay">
+                {% if source_url %}
+                <div class="analysis-badge">
+                    <i class="fas fa-link"></i>
+                    Scribing Link Analysis
+                </div>
+                {% endif %}
+                <div class="category-tag">
+                    <i class="fas 
+                        {% if product.category == 'electronics' %}fa-microchip
+                        {% elif product.category == 'fashion' %}fa-shirt
+                        {% elif product.category == 'home' %}fa-couch
+                        {% elif product.category == 'beauty' %}fa-sparkles
+                        {% elif product.category == 'sports' %}fa-dumbbell
+                        {% elif product.category == 'grocery' %}fa-apple-whole
+                        {% else %}fa-tag{% endif %}">
+                    </i>
+                    {{ product.category.title() }}
+                </div>
+                <h1 class="product-title">{{ product.name }}</h1>
+
+                <div class="rating-box">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <span class="rating-val">{{ product.rating_value }}</span>
+                    </div>
+                    <span class="rating-count">({{ product.rating_count }} Ratings)</span>
+                </div>
+
+                <p class="product-desc">{{ product.description }}</p>
+
+                <div class="detail-grids">
+                    <div class="detail-section">
+                        <h3><i class="fas fa-list-check"></i> Key Features</h3>
+                        <ul>
+                            {% for feature in product.features %}
+                            <li>{{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h3><i class="fas fa-lightbulb"></i> Best Uses</h3>
+                        <ul>
+                            {% for use in product.uses %}
+                            <li>{{ use }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="specs-container">
+                    <h3>Technical Specifications</h3>
+                    <ul>
+                        {% for spec in product.specifications %}
+                        <li><i class="fas fa-check-circle"></i> {{ spec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="best-price-tag">Best Price: {{ product.platforms[0].price if product.platforms else 'N/A' }}
+                </div>
+            </div>
+        </section>
+
+        <section class="price-comparison animate-up-delay-2">
+            <h2>Compare Platforms</h2>
+
+            {% if product.price_analysis %}
+            <div class="price-analysis-box">
+                <div class="analysis-header">
+                    <i class="fas fa-microchip"></i>
+                    <span>Scribe's Price Intelligence</span>
+                </div>
+                <p>{{ product.price_analysis }}</p>
+            </div>
+            {% endif %}
+
+            <div class="platform-grid">
+                {% for platform in product.platforms %}
+                <div class="platform-card {{ 'unavailable' if platform.price == 'Not Available' }}">
+                    <div class="platform-header">
+                        <i class="
+                            {% if platform.name.lower() == 'amazon' %}fab fa-amazon
+                            {% elif platform.name.lower() == 'flipkart' %}fas fa-shopping-cart
+                            {% elif platform.name.lower() == 'myntra' %}fas fa-bag-shopping
+                            {% elif platform.name.lower() == 'meesho' %}fas fa-store
+                            {% elif platform.name.lower() == 'ajio' %}fas fa-tags
+                            {% else %}fas fa-shop{% endif %}">
+                        </i>
+                        <span>{{ platform.name }}</span>
+                    </div>
+                    <div class="platform-price {{ 'text-red' if platform.price == 'Not Available' }}">
+                        {{ platform.price }}
+                    </div>
+                    <div class="platform-deal">
+                        {{ platform.deal }}
+                    </div>
+                    {% if platform.price != 'Not Available' %}
+                    <button class="buy-now-btn" onclick="window.open('{{ platform.url }}', '_blank')">Go to {{
+                        platform.name }}</button>
+                    {% else %}
+                    <button class="buy-now-btn disabled" disabled>Out of Stock</button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CartScribe AI. All rights scribed.</p>
+    </footer>
+</body>
+
+</html>
